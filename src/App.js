@@ -32,10 +32,7 @@ class App extends Component {
     if (data) data = JSON.stringify(data)
     return await fetch(`http://localhost:8082${path}`, {
       method: method,
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
+      headers: {"Content-Type": "application/json","Accept": "application/json"},
       body: data
     })
   }
@@ -75,7 +72,7 @@ class App extends Component {
     return (
       <div className="App">
         {this.consoleLogsHere()}
-        <Toolbar/>
+        <Toolbar toggleRead = {this.toggleRead.bind(this)}messages = {this.state.messages}/>
         <Compose/>
         <MessageList toggleRead = {this.toggleRead.bind(this)} toggleStar={this.toggleStar.bind(this)} toggleSelect={this.toggleSelect.bind(this)} messages = {this.state.messages}/>
       </div>

@@ -1,26 +1,52 @@
 import React from "react"
 
-const Toolbar = () => {
+const numberRead = (messages) => {
+  return messages.reduce((a,e)=>{
+    !e.read?a+=1:a+=0
+    return a
+  },0)
+}
 
-  //shiz goes in here for logic pertaining to the toolbar
+const selectedIconDeterminer = (messages) => {
+  let numOfSelected = messages.reduce((a,e)=>{
+    e.selected?a+=1:a+=0
+    return a
+  },0)
+  if(numOfSelected === messages.length){
+    return "fa fa-check-square-o"
+  }else if(numOfSelected === 0){
+    return "fa fa-square-o"
+  }else{
+    return "fa fa-minus-square-o"
+  }
+}
 
+const grabAllSelected = (messages) => {
+  return messages.filter(e => e.selected === true)
+}
+
+const Toolbar = (props) => {
+  console.log("messages in toolbar",props.messages)
+  console.log("selectedMessages",grabAllSelected(props.messages))
+  let nread = numberRead(props.messages)
+  let allSelectedMessages = grabAllSelected(props.messages)
   return (
     <div className="row toolbar">
       <div className="col-md-12">
         <p className="pull-right">
-          <span className="badge badge">2</span>
-          unread messages
+          <span className="badge badge">{nread}</span>
+          unread {nread === 1 ? "message" : "messages"}
         </p>
 
         <button className="btn btn-default">
-          <i className="fa fa-minus-square-o"></i>
+          <i className={selectedIconDeterminer(props.messages)}></i>
         </button>
 
-        <button className="btn btn-default">
+        <button className="btn btn-default" onClick = {()=>allSelectedMessages.forEach((e) => e.read === false ? props.toggleRead(e) : console.log("'tis already read"))}>
           Mark As Read
         </button>
 
-        <button className="btn btn-default">
+        <button className="btn btn-default" onClick = {()=>allSelectedMessages.forEach((e) => e.read === true ? props.toggleRead(e) : console.log("'tis already unread"))}>
           Mark As Unread
         </button>
 
