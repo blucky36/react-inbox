@@ -1,81 +1,83 @@
-import React, { Component } from 'react';
-import './App.css';
-
-const seedData = [
-  {
-    "id": 1,
-    "subject": "You can't input the protocol without calculating the mobile RSS protocol!",
-    "read": false,
-    "starred": true,
-    "labels": ["dev", "personal"]
-  },
-  {
-    "id": 2,
-    "subject": "connecting the system won't do anything, we need to input the mobile AI panel!",
-    "read": false,
-    "starred": false,
-    "selected": true,
-    "labels": []
-  },
-  {
-    "id": 3,
-    "subject": "Use the 1080p HTTP feed, then you can parse the cross-platform hard drive!",
-    "read": false,
-    "starred": true,
-    "labels": ["dev"]
-  },
-  {
-    "id": 4,
-    "subject": "We need to program the primary TCP hard drive!",
-    "read": true,
-    "starred": false,
-    "selected": true,
-    "labels": []
-  },
-  {
-    "id": 5,
-    "subject": "If we override the interface, we can get to the HTTP feed through the virtual EXE interface!",
-    "read": false,
-    "starred": false,
-    "labels": ["personal"]
-  },
-  {
-    "id": 6,
-    "subject": "We need to back up the wireless GB driver!",
-    "read": true,
-    "starred": true,
-    "labels": []
-  },
-  {
-    "id": 7,
-    "subject": "We need to index the mobile PCI bus!",
-    "read": true,
-    "starred": false,
-    "labels": ["dev", "personal"]
-  },
-  {
-    "id": 8,
-    "subject": "If we connect the sensor, we can get to the HDD port through the redundant IB firewall!",
-    "read": true,
-    "starred": true,
-    "labels": []
-  }
-]
+import React, { Component } from "react";
+import "./App.css";
+import Toolbar from "./components/toolbar.js"
+import Compose from "./components/compose.js"
+import MessageList from "./components/messageList.js"
+// import seedData from "./components/seedData.js"
 
 class App extends Component {
 
+  constructor(props){
+    super(props)
+    this.state = {messages:[]}
+  }
+
+  async componentDidMount() {
+    const messages = await fetch("http://localhost:8082/api/messages").then((data)=>data.json())
+    this.setState({...this.state,messages},()=>{console.log(this.state)})
+  }
+
+  toggleProperty(message, prop) {
+    const ii = this.state.messages.indexOf(message)
+    this.setState({
+      messages: [
+        ...this.state.messages.slice(0, ii),
+        { ...message, [prop]: !message[prop] },
+        ...this.state.messages.slice(ii + 1),
+      ]
+    })
+  }
+
+  async fetchRequest(path, method = "GET", data = null) {
+    if (data) data = JSON.stringify(data)
+    return await fetch(`http://localhost:8082${path}`, {
+      method: method,
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      body: data
+    })
+  }
+
+  async createMessage(data) {
+    await this.fetchRequest("/api/messages", "POST", data)
+  }
+
+  async updateMessage(data) {
+    await this.fetchRequest("/api/messages", "PATCH", data)
+  }
+
+  async toggleStar(message) {
+    await this.updateMessage({"messageIds": [message.id],"command": "star","star": !message.starred})
+    this.toggleProperty(message, "starred")
+  }
+
+  async toggleSelect(message){
+    this.toggleProperty(message, "selected")
+  }
+
+  async toggleRead(message){
+    await this.updateMessage({"messageIds": [message.id],"command": "read","read": !message.read})
+    this.toggleProperty(message, "read")
+  }
+
+  // onCompose(newMessage){
+  //   const messages = this.state.messages.push(newMessage)
+  //   this.setState({...this.state,messages},()=>{console.log(this.state.messages)})
+  // }
+
   consoleLogsHere() {
-    console.log(seedData)//this works
-
-
-
     //^(_-_)^ <(^.^)> ^(o.O^) <(0w0>) -(oi)//
   }
 
   render() {
     return (
       <div className="App">
-        {this.consoleLogsHere()}//put testing console logs in here
+        {this.consoleLogsHere()}
+        <Toolbar/>
+        <Compose/>
+        <MessageList toggleRead = {this.toggleRead.bind(this)} toggleStar={this.toggleStar.bind(this)} toggleSelect={this.toggleSelect.bind(this)} messages = {this.state.messages}/>
       </div>
     );
   }
