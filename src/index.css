@@ -1,3 +1,7 @@
+body{
+  background: url(https://previews.123rf.com/images/color885/color8851612/color885161200046/70431702-abstract-fractal-background-computer-generated-image-urls-fractal-artwork-for-banners-posters-web-de.jpg);
+}
+
 .message {
   margin-left: 0px;
   padding-top: 8px;
@@ -24,6 +28,7 @@
 
 .message.unread {
   font-weight: bold;
+  background: white;
 }
 
 .message.selected {
@@ -77,4 +82,8 @@ footer.spacer {
 
 .boldy {
   font-weight: bold;
+}
+
+.white {
+  color: white;
 }

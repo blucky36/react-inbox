@@ -3,7 +3,6 @@ import "./App.css";
 import Toolbar from "./components/toolbar.js"
 import Compose from "./components/compose.js"
 import MessageList from "./components/messageList.js"
-// import seedData from "./components/seedData.js"
 
 class App extends Component {
 
@@ -59,6 +58,36 @@ class App extends Component {
     this.toggleProperty(message, "read")
   }
 
+  async addLabel(message, toAdd){
+    if(message.labels.includes(toAdd) || toAdd === "Apply label"){return}else{
+      const ii = this.state.messages.indexOf(message)
+      let newLabels = message.labels.concat(toAdd)
+      await this.updateMessage({"messageIds": [message.id],"command": "addLabel","label": toAdd})
+      this.setState({
+        messages: [
+          ...this.state.messages.slice(0, ii),
+          { ...message, labels: newLabels },
+          ...this.state.messages.slice(ii + 1)
+        ]
+      })
+    }
+  }
+
+  async byeLabel(message,toRemove){
+    if(!message.labels.includes(toRemove) || toRemove === "Remove label"){return}else{
+      await this.updateMessage({"messageIds": [message.id],"command": "removeLabel","label": toRemove})
+      this.setState({
+        messages: this.state.messages.map(ee => {
+          const ii = ee.labels.indexOf(toRemove)
+          if (ee.selected) {
+            return {...ee,labels: [...ee.labels.slice(0, ii),...ee.labels.slice(ii + 1)]}
+          }
+          return ee
+        })
+      })
+    }
+  }
+
   // onCompose(newMessage){
   //   const messages = this.state.messages.push(newMessage)
   //   this.setState({...this.state,messages},()=>{console.log(this.state.messages)})
@@ -71,8 +100,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        {this.consoleLogsHere()}
-        <Toolbar toggleRead = {this.toggleRead.bind(this)}messages = {this.state.messages}/>
+        <Toolbar byeLabel={this.byeLabel.bind(this)} addLabel = {this.addLabel.bind(this)} toggleRead = {this.toggleRead.bind(this)} messages = {this.state.messages}/>
         <Compose/>
         <MessageList toggleRead = {this.toggleRead.bind(this)} toggleStar={this.toggleStar.bind(this)} toggleSelect={this.toggleSelect.bind(this)} messages = {this.state.messages}/>
       </div>

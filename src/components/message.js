@@ -9,7 +9,7 @@ const Message = (props) => {
   props.message.starred ? star = "star fa fa-star" : star = "star fa fa-star-o"
   return (
     <div>
-      <div className={`row message ${props.message.read ? "read" : ""} ${props.message.selected ? "selected" : ""}`}>
+      <div className={`row message ${props.message.read ? "read" : "unread"} ${props.message.selected ? "selected" : ""}`}>
         <div className="col-xs-1">
           <div className="row">
             <div className="col-xs-2" onClick={()=>props.toggleSelect(props.message)}>

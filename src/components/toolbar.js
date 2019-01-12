@@ -27,18 +27,17 @@ const grabAllSelected = (messages) => {
 
 const Toolbar = (props) => {
   console.log("messages in toolbar",props.messages)
-  console.log("selectedMessages",grabAllSelected(props.messages))
   let nread = numberRead(props.messages)
   let allSelectedMessages = grabAllSelected(props.messages)
   return (
     <div className="row toolbar">
       <div className="col-md-12">
-        <p className="pull-right">
+        <p className="pull-right white">
           <span className="badge badge">{nread}</span>
           unread {nread === 1 ? "message" : "messages"}
         </p>
 
-        <button className="btn btn-default">
+        <button className="btn btn-default" onClick = {()=>console.log("yeet")}>
           <i className={selectedIconDeterminer(props.messages)}></i>
         </button>
 
@@ -50,14 +49,14 @@ const Toolbar = (props) => {
           Mark As Unread
         </button>
 
-        <select className="form-control label-select">
+        <select className="form-control label-select" onChange = {(event)=>allSelectedMessages.forEach((message)=>props.addLabel(message,event.target.value))}>
           <option>Apply label</option>
           <option value="dev">dev</option>
           <option value="personal">personal</option>
           <option value="gschool">gschool</option>
         </select>
 
-        <select className="form-control label-select">
+        <select className="form-control label-select" onChange = {(event)=>allSelectedMessages.forEach((message)=>props.byeLabel(message,event.target.value))}>
           <option>Remove label</option>
           <option value="dev">dev</option>
           <option value="personal">personal</option>
