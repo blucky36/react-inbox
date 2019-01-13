@@ -2,7 +2,6 @@ import React from "react"
 
 const Compose = (props) => {
 
-  // console.log(props)
 
   return (
     <form className="form-horizontal well">

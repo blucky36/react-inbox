@@ -1,14 +1,16 @@
 import React, { Component } from "react";
 import "./App.css";
 import Toolbar from "./components/toolbar.js"
-import Compose from "./components/compose.js"
 import MessageList from "./components/messageList.js"
 
 class App extends Component {
 
   constructor(props){
     super(props)
-    this.state = {messages:[]}
+    this.state = {
+      messages:[],
+      composeVisibility:false
+    }
   }
 
   async componentDidMount() {
@@ -19,6 +21,7 @@ class App extends Component {
   toggleProperty(message, prop) {
     const ii = this.state.messages.indexOf(message)
     this.setState({
+      ...this.state,
       messages: [
         ...this.state.messages.slice(0, ii),
         { ...message, [prop]: !message[prop] },
@@ -27,7 +30,7 @@ class App extends Component {
     })
   }
 
-  async fetchRequest(path, method = "GET", data = null) {
+  async fetchRequest(path, method, data) {
     if (data) data = JSON.stringify(data)
     return await fetch(`http://localhost:8082${path}`, {
       method: method,
@@ -64,6 +67,7 @@ class App extends Component {
       let newLabels = message.labels.concat(toAdd)
       await this.updateMessage({"messageIds": [message.id],"command": "addLabel","label": toAdd})
       this.setState({
+        ...this.state,
         messages: [
           ...this.state.messages.slice(0, ii),
           { ...message, labels: newLabels },
@@ -77,6 +81,7 @@ class App extends Component {
     if(!message.labels.includes(toRemove) || toRemove === "Remove label"){return}else{
       await this.updateMessage({"messageIds": [message.id],"command": "removeLabel","label": toRemove})
       this.setState({
+        ...this.state,
         messages: this.state.messages.map(ee => {
           const ii = ee.labels.indexOf(toRemove)
           if (ee.selected) {
@@ -86,6 +91,22 @@ class App extends Component {
         })
       })
     }
+  }
+
+  toggleAllSelected() {
+    const selectedMessages = this.state.messages.map((message) => !!message.selected ? message : {...message,selected:!message.selected})
+    this.setState({...this.state,messages: selectedMessages})
+  }
+
+  toggleAllDeselect() {
+    const selectedMessages = this.state.messages.map((message)=> !!message.selected ? {...message,selected:!message.selected} : message)
+    this.setState({...this.state,messages: selectedMessages})
+  }
+
+  toggleComposeVisibility(visibility) {
+    console.log("get here")
+    const newState = {...this.state,composeVisibility: !visibility}
+    this.setState(newState,()=>{console.log(this.state.composeVisibility)})
   }
 
   // onCompose(newMessage){
@@ -100,8 +121,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Toolbar byeLabel={this.byeLabel.bind(this)} addLabel = {this.addLabel.bind(this)} toggleRead = {this.toggleRead.bind(this)} messages = {this.state.messages}/>
-        <Compose/>
+        <Toolbar composeVisibility = {this.state.composeVisibility} toggleComposeVisibility = {this.toggleComposeVisibility.bind(this)} toggleAllDeselect = {this.toggleAllDeselect.bind(this)} toggleAllSelected = {this.toggleAllSelected.bind(this)} byeLabel={this.byeLabel.bind(this)} addLabel = {this.addLabel.bind(this)} toggleRead = {this.toggleRead.bind(this)} messages = {this.state.messages}/>
         <MessageList toggleRead = {this.toggleRead.bind(this)} toggleStar={this.toggleStar.bind(this)} toggleSelect={this.toggleSelect.bind(this)} messages = {this.state.messages}/>
       </div>
     );

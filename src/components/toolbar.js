@@ -1,15 +1,16 @@
 import React from "react"
+import Compose from "./compose.js"
 
 const numberRead = (messages) => {
   return messages.reduce((a,e)=>{
-    !e.read?a+=1:a+=0
+    !e.read?a++:a+=0
     return a
   },0)
 }
 
 const selectedIconDeterminer = (messages) => {
   let numOfSelected = messages.reduce((a,e)=>{
-    e.selected?a+=1:a+=0
+    e.selected?a++:a+=0
     return a
   },0)
   if(numOfSelected === messages.length){
@@ -26,47 +27,54 @@ const grabAllSelected = (messages) => {
 }
 
 const Toolbar = (props) => {
-  console.log("messages in toolbar",props.messages)
+  let checkIcon = selectedIconDeterminer(props.messages)
   let nread = numberRead(props.messages)
   let allSelectedMessages = grabAllSelected(props.messages)
   return (
-    <div className="row toolbar">
-      <div className="col-md-12">
-        <p className="pull-right white">
-          <span className="badge badge">{nread}</span>
-          unread {nread === 1 ? "message" : "messages"}
-        </p>
+    <div>
+      <div className="row toolbar">
+        <div className="col-md-12">
+          <p className="pull-right white">
+            <span className="badge badge">{nread}</span>
+            unread {nread === 1 ? "message" : "messages"}
+          </p>
 
-        <button className="btn btn-default" onClick = {()=>console.log("yeet")}>
-          <i className={selectedIconDeterminer(props.messages)}></i>
-        </button>
+          <button className="btn btn-danger" onClick={()=>{props.toggleComposeVisibility(props.composeVisibility);console.log("yeet")}}>
+            <i className="fa fa-plus"></i>
+          </button>
 
-        <button className="btn btn-default" onClick = {()=>allSelectedMessages.forEach((e) => e.read === false ? props.toggleRead(e) : console.log("'tis already read"))}>
-          Mark As Read
-        </button>
+          <button className="btn btn-default" onClick = {()=>checkIcon === "fa fa-check-square-o" ? props.toggleAllDeselect() : props.toggleAllSelected()}>
+            <i className={checkIcon}></i>
+          </button>
 
-        <button className="btn btn-default" onClick = {()=>allSelectedMessages.forEach((e) => e.read === true ? props.toggleRead(e) : console.log("'tis already unread"))}>
-          Mark As Unread
-        </button>
+          <button className="btn btn-default" onClick = {()=>allSelectedMessages.forEach((e) => e.read === false ? props.toggleRead(e) : console.log("'tis already read"))}>
+            Mark As Read
+          </button>
 
-        <select className="form-control label-select" onChange = {(event)=>allSelectedMessages.forEach((message)=>props.addLabel(message,event.target.value))}>
-          <option>Apply label</option>
-          <option value="dev">dev</option>
-          <option value="personal">personal</option>
-          <option value="gschool">gschool</option>
-        </select>
+          <button className="btn btn-default" onClick = {()=>allSelectedMessages.forEach((e) => e.read === true ? props.toggleRead(e) : console.log("'tis already unread"))}>
+            Mark As Unread
+          </button>
 
-        <select className="form-control label-select" onChange = {(event)=>allSelectedMessages.forEach((message)=>props.byeLabel(message,event.target.value))}>
-          <option>Remove label</option>
-          <option value="dev">dev</option>
-          <option value="personal">personal</option>
-          <option value="gschool">gschool</option>
-        </select>
+          <select className="form-control label-select" onChange = {(event)=>{allSelectedMessages.forEach((message)=>props.addLabel(message,event.target.value)); event.target.selectedIndex = 0}}>
+            <option>Apply label</option>
+            <option value="dev">dev</option>
+            <option value="personal">personal</option>
+            <option value="gschool">gschool</option>
+          </select>
 
-        <button className="btn btn-default">
-          <i className="fa fa-trash-o"></i>
-        </button>
+          <select className="form-control label-select" onChange = {(event)=>{allSelectedMessages.forEach((message)=>props.byeLabel(message,event.target.value)); event.target.selectedIndex = 0}}>
+            <option>Remove label</option>
+            <option value="dev">dev</option>
+            <option value="personal">personal</option>
+            <option value="gschool">gschool</option>
+          </select>
+
+          <button className="btn btn-default">
+            <i className="fa fa-trash-o"></i>
+          </button>
+        </div>
       </div>
+      {props.composeVisibility ? <Compose/> : <span></span>}
     </div>
   )
 }
