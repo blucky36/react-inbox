@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./App.css";
 import Toolbar from "./components/toolbar.js"
 import MessageList from "./components/messageList.js"
+import {BrowserRouter as Router} from "react-router-dom"
 
 class App extends Component {
 
@@ -15,7 +16,7 @@ class App extends Component {
 
   async componentDidMount() {
     const messages = await fetch("http://localhost:8082/api/messages").then((data)=>data.json())
-    this.setState({...this.state,messages},()=>{console.log(this.state)})
+    this.setState({...this.state,messages})
   }
 
   toggleProperty(message, prop) {
@@ -77,20 +78,18 @@ class App extends Component {
     }
   }
 
-  async byeLabel(message,toRemove){
-    if(!message.labels.includes(toRemove) || toRemove === "Remove label"){return}else{
-      await this.updateMessage({"messageIds": [message.id],"command": "removeLabel","label": toRemove})
-      this.setState({
-        ...this.state,
-        messages: this.state.messages.map(ee => {
-          const ii = ee.labels.indexOf(toRemove)
-          if (ee.selected) {
-            return {...ee,labels: [...ee.labels.slice(0, ii),...ee.labels.slice(ii + 1)]}
-          }
-          return ee
-        })
+  async byeLabel(toRemove){
+    this.updateMessage({"messageIds": this.state.messages.filter(message=>message.selected).map(message=>message.id),"command": "removeLabel","label": toRemove})
+    this.setState({
+      ...this.state,
+      messages: this.state.messages.map(message => {
+        const ii = message.labels.indexOf(toRemove)
+        if (message.selected && ii >= 0) {
+          return {...message,labels: [...message.labels.slice(0, ii),...message.labels.slice(ii + 1)]}
+        }
+        return message
       })
-    }
+    })
   }
 
   toggleAllSelected() {
@@ -127,26 +126,30 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Toolbar
-          composeVisibility = {this.state.composeVisibility}
-          toggleComposeVisibility = {this.toggleComposeVisibility.bind(this)}
-          toggleAllDeselect = {this.toggleAllDeselect.bind(this)}
-          toggleAllSelected = {this.toggleAllSelected.bind(this)}
-          byeLabel={this.byeLabel.bind(this)}
-          addLabel = {this.addLabel.bind(this)}
-          toggleRead = {this.toggleRead.bind(this)}
-          messages = {this.state.messages}
-          onCompose = {this.onCompose.bind(this)}
-          onDelete = {this.onDelete.bind(this)}
-        />
-        <MessageList
-          toggleRead = {this.toggleRead.bind(this)}
-          toggleStar={this.toggleStar.bind(this)}
-          toggleSelect={this.toggleSelect.bind(this)}
-          messages = {this.state.messages}
-        />
+        <Router>
+          <div>
+            <Toolbar
+              composeVisibility = {this.state.composeVisibility}
+              toggleComposeVisibility = {this.toggleComposeVisibility.bind(this)}
+              toggleAllDeselect = {this.toggleAllDeselect.bind(this)}
+              toggleAllSelected = {this.toggleAllSelected.bind(this)}
+              byeLabel={this.byeLabel.bind(this)}
+              addLabel = {this.addLabel.bind(this)}
+              toggleRead = {this.toggleRead.bind(this)}
+              messages = {this.state.messages}
+              onCompose = {this.onCompose.bind(this)}
+              onDelete = {this.onDelete.bind(this)}
+            />
+            <MessageList
+              toggleRead = {this.toggleRead.bind(this)}
+              toggleStar={this.toggleStar.bind(this)}
+              toggleSelect={this.toggleSelect.bind(this)}
+              messages = {this.state.messages}
+            />
+          </div>
+        </Router>
       </div>
-    );
+    )
   }
 }
 

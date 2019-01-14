@@ -1,4 +1,5 @@
 import React from "react"
+import {Link} from "react-router-dom"
 
 const Message = (props) => {
   let check = ""
@@ -20,12 +21,14 @@ const Message = (props) => {
             </div>
           </div>
         </div>
-        <div onClick = {()=> console.log("Hi Teddi")}>
-          <div className="col-xs-11" onClick = {()=>{!props.message.read?props.toggleRead(props.message):console.log("oi")}}>
+        <div>
+          <div className="col-xs-11">
             {props.message.labels.map((e,i)=><span key = {i} className = "label label-warning">{e}</span>)}
-            <a href={`/${props.message.id}`} className = {props.message.read ? ``: "boldy" }>
-              {props.message.subject}
-            </a>
+            <Link to={`/messages/blakeIsAwesome/${props.message.id}`}>
+              <span className = {props.message.read ? ``: "boldy" } onClick = {()=>{if(!props.message.read)props.toggleRead(props.message)}}>
+                {props.message.subject}
+              </span>
+            </Link>
           </div>
         </div>
       </div>
@@ -33,18 +36,17 @@ const Message = (props) => {
         isNaN(Number(window.location.href[window.location.href.length-2]))
         ? Number(window.location.href[window.location.href.length-1]) === props.message.id
         ? <div className="row message-body">
-            <div className="col-xs-11 col-xs-offset-1">{props.message.body}</div>
-          </div>
+        <div className="col-xs-11 col-xs-offset-1">{props.message.body}</div>
+        </div>
         : <span></span>
         : Number(window.location.href[window.location.href.length-2] + window.location.href[window.location.href.length-1]) === props.message.id
         ? <div className="row message-body">
-            <div className="col-xs-11 col-xs-offset-1">{props.message.body}</div>
-          </div>
+        <div className="col-xs-11 col-xs-offset-1">{props.message.body}</div>
+        </div>
         : <span></span>
       }
     </div>
   )
-  //the last stupid line is a ternery to see if the email a tag is clicked and if it is clicked it will render the body of the selected message. else it will append an empty span// edit now its 2 terneries inside a ternery to deal with double digit numbers of emails...
 }
 
 export default Message

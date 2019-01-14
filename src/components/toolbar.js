@@ -38,37 +38,30 @@ const Toolbar = (props) => {
             <span className="badge badge">{nread}</span>
             unread {nread === 1 ? "message" : "messages"}
           </p>
-
           <button className="btn btn-danger" onClick={()=>{props.toggleComposeVisibility(props.composeVisibility)}}>
             <i className="fa fa-plus"></i>
           </button>
-
           <button className="btn btn-default" onClick = {()=>checkIcon === "fa fa-check-square-o" ? props.toggleAllDeselect() : props.toggleAllSelected()}>
             <i className={checkIcon}></i>
           </button>
-
           <button className="btn btn-default" onClick = {()=>allSelectedMessages.forEach((e) => e.read === false ? props.toggleRead(e) : console.log("'tis already read"))}>
             Mark As Read
           </button>
-
           <button className="btn btn-default" onClick = {()=>allSelectedMessages.forEach((e) => e.read === true ? props.toggleRead(e) : console.log("'tis already unread"))}>
             Mark As Unread
           </button>
-
           <select className="form-control label-select" onChange = {(event)=>{allSelectedMessages.forEach((message)=>props.addLabel(message,event.target.value)); event.target.selectedIndex = 0}}>
             <option>Apply label</option>
             <option value="dev">dev</option>
             <option value="personal">personal</option>
             <option value="gschool">gschool</option>
           </select>
-
-          <select className="form-control label-select" onChange = {(event)=>{allSelectedMessages.forEach((message)=>props.byeLabel(message,event.target.value)); event.target.selectedIndex = 0}}>
+          <select className="form-control label-select" onChange = {(event)=>{props.byeLabel(event.target.value); event.target.selectedIndex = 0}}>
             <option>Remove label</option>
             <option value="dev">dev</option>
             <option value="personal">personal</option>
             <option value="gschool">gschool</option>
           </select>
-
           <button className="btn btn-default" onClick={(e)=>{props.onDelete()}}>
             <i className="fa fa-trash-o"></i>
           </button>
