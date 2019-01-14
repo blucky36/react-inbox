@@ -36,11 +36,11 @@ class App extends Component {
       method: method,
       headers: {"Content-Type": "application/json","Accept": "application/json"},
       body: data
-    })
+    }).then(data=>data.json())
   }
 
   async createMessage(data) {
-    await this.fetchRequest("/api/messages", "POST", data)
+    return await this.fetchRequest("/api/messages", "POST", data)
   }
 
   async updateMessage(data) {
@@ -104,25 +104,47 @@ class App extends Component {
   }
 
   toggleComposeVisibility(visibility) {
-    console.log("get here")
     const newState = {...this.state,composeVisibility: !visibility}
-    this.setState(newState,()=>{console.log(this.state.composeVisibility)})
+    this.setState(newState)
   }
 
-  // onCompose(newMessage){
-  //   const messages = this.state.messages.push(newMessage)
-  //   this.setState({...this.state,messages},()=>{console.log(this.state.messages)})
-  // }
-
-  consoleLogsHere() {
-    //^(_-_)^ <(^.^)> ^(o.O^) <(0w0>) -(oi)//
+  async onCompose(subject,body){
+    if(subject === "" || body === "") return
+    const newMessage = await this.createMessage({subject,body})
+    const messages = await this.state.messages.concat(newMessage)
+    this.setState({...this.state,messages})
   }
+
+  async onDelete(){
+    let notDeletedMessages = this.state.messages.filter((message)=>!message.selected)
+    let messagesToDelete = this.state.messages.filter((message)=>message.selected)
+    await this.updateMessage({"messageIds": messagesToDelete.map(message => message.id),"command": "delete"})
+    this.setState({...this.state,messages:notDeletedMessages})
+  }
+
+  //^(_-_)^ <(^.^)> ^(o.O^) <(0w0>) -(oi)//
 
   render() {
     return (
       <div className="App">
-        <Toolbar composeVisibility = {this.state.composeVisibility} toggleComposeVisibility = {this.toggleComposeVisibility.bind(this)} toggleAllDeselect = {this.toggleAllDeselect.bind(this)} toggleAllSelected = {this.toggleAllSelected.bind(this)} byeLabel={this.byeLabel.bind(this)} addLabel = {this.addLabel.bind(this)} toggleRead = {this.toggleRead.bind(this)} messages = {this.state.messages}/>
-        <MessageList toggleRead = {this.toggleRead.bind(this)} toggleStar={this.toggleStar.bind(this)} toggleSelect={this.toggleSelect.bind(this)} messages = {this.state.messages}/>
+        <Toolbar
+          composeVisibility = {this.state.composeVisibility}
+          toggleComposeVisibility = {this.toggleComposeVisibility.bind(this)}
+          toggleAllDeselect = {this.toggleAllDeselect.bind(this)}
+          toggleAllSelected = {this.toggleAllSelected.bind(this)}
+          byeLabel={this.byeLabel.bind(this)}
+          addLabel = {this.addLabel.bind(this)}
+          toggleRead = {this.toggleRead.bind(this)}
+          messages = {this.state.messages}
+          onCompose = {this.onCompose.bind(this)}
+          onDelete = {this.onDelete.bind(this)}
+        />
+        <MessageList
+          toggleRead = {this.toggleRead.bind(this)}
+          toggleStar={this.toggleStar.bind(this)}
+          toggleSelect={this.toggleSelect.bind(this)}
+          messages = {this.state.messages}
+        />
       </div>
     );
   }

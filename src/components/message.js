@@ -12,8 +12,8 @@ const Message = (props) => {
       <div className={`row message ${props.message.read ? "read" : "unread"} ${props.message.selected ? "selected" : ""}`}>
         <div className="col-xs-1">
           <div className="row">
-            <div className="col-xs-2" onClick={()=>props.toggleSelect(props.message)}>
-              <input type="checkbox" checked = {`${check}`}></input>
+            <div className="col-xs-2">
+              <input type="checkbox" onChange = {()=>{props.toggleSelect(props.message)}} checked = {`${check}`}></input>
             </div>
             <div className="col-xs-2" id = {props.message.id} onClick={()=>props.toggleStar(props.message)}>
               <i className={`${star}`}></i>
@@ -29,10 +29,22 @@ const Message = (props) => {
           </div>
         </div>
       </div>
-      {Number(window.location.href[window.location.href.length-1]) === props.message.id ? <div className="row message-body"><div className="col-xs-11 col-xs-offset-1">{props.message.body}</div></div> : <span></span>}
+      {
+        isNaN(Number(window.location.href[window.location.href.length-2]))
+        ? Number(window.location.href[window.location.href.length-1]) === props.message.id
+        ? <div className="row message-body">
+            <div className="col-xs-11 col-xs-offset-1">{props.message.body}</div>
+          </div>
+        : <span></span>
+        : Number(window.location.href[window.location.href.length-2] + window.location.href[window.location.href.length-1]) === props.message.id
+        ? <div className="row message-body">
+            <div className="col-xs-11 col-xs-offset-1">{props.message.body}</div>
+          </div>
+        : <span></span>
+      }
     </div>
   )
-  //the last stupid line is a ternery to see if the email is selected and if it is selected will render the body of the selected message. else it will append an empty span
+  //the last stupid line is a ternery to see if the email a tag is clicked and if it is clicked it will render the body of the selected message. else it will append an empty span// edit now its 2 terneries inside a ternery to deal with double digit numbers of emails...
 }
 
 export default Message

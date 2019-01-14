@@ -39,7 +39,7 @@ const Toolbar = (props) => {
             unread {nread === 1 ? "message" : "messages"}
           </p>
 
-          <button className="btn btn-danger" onClick={()=>{props.toggleComposeVisibility(props.composeVisibility);console.log("yeet")}}>
+          <button className="btn btn-danger" onClick={()=>{props.toggleComposeVisibility(props.composeVisibility)}}>
             <i className="fa fa-plus"></i>
           </button>
 
@@ -69,12 +69,12 @@ const Toolbar = (props) => {
             <option value="gschool">gschool</option>
           </select>
 
-          <button className="btn btn-default">
+          <button className="btn btn-default" onClick={(e)=>{props.onDelete()}}>
             <i className="fa fa-trash-o"></i>
           </button>
         </div>
       </div>
-      {props.composeVisibility ? <Compose/> : <span></span>}
+      {props.composeVisibility ? <Compose messages = {props.messages} onCompose = {props.onCompose}/> : <span></span>}
     </div>
   )
 }

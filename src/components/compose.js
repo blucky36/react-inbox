@@ -24,7 +24,7 @@ const Compose = (props) => {
       </div>
       <div className="form-group">
         <div className="col-sm-8 col-sm-offset-2">
-          <input type="submit" value="Send" className="btn btn-primary"></input>
+          <input type="submit" value="Send" className="btn btn-primary" onClick={(e)=>{e.preventDefault();props.onCompose(document.getElementById("subject").value, document.getElementById("body").value)}}></input>
         </div>
       </div>
     </form>
