@@ -3,6 +3,7 @@ import "./App.css";
 import Toolbar from "./components/toolbar.js"
 import MessageList from "./components/messageList.js"
 import {BrowserRouter as Router} from "react-router-dom"
+import { NyanScrollBar } from "react-nyan-stroller"
 
 class App extends Component {
 
@@ -148,6 +149,10 @@ class App extends Component {
             />
           </div>
         </Router>
+        <NyanScrollBar draggable targetAxis="horizontal" />
+        <NyanScrollBar draggable targetAxis="vertical" />
+        <NyanScrollBar draggable oppositePosition targetAxis="horizontal" />
+        <NyanScrollBar draggable oppositePosition targetAxis="vertical" />
       </div>
     )
   }
