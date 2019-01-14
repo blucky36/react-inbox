@@ -7,7 +7,7 @@ const Message = (props) => {
   if(props.message.selected === true){
     check = "checked"
   }
-  props.message.starred ? star = "star fa fa-star" : star = "star fa fa-star-o"
+  props.message.starred ? star = "star fa fa-star starYellow" : star = "star fa fa-star-o"
   return (
     <div>
       <div className={`row message ${props.message.read ? "read" : "unread"} ${props.message.selected ? "selected" : ""}`}>

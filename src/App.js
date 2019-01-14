@@ -15,7 +15,7 @@ class App extends Component {
   }
 
   async componentDidMount() {
-    const messages = await fetch("http://localhost:8082/api/messages").then((data)=>data.json())
+    const messages = await fetch(`${process.env.REACT_APP_API_URL}/api/messages`).then((data) => data.json())
     this.setState({...this.state,messages})
   }
 
@@ -33,11 +33,11 @@ class App extends Component {
 
   async fetchRequest(path, method, data) {
     if (data) data = JSON.stringify(data)
-    return await fetch(`http://localhost:8082${path}`, {
+    return await fetch(`${process.env.REACT_APP_API_URL}${path}`, {
       method: method,
       headers: {"Content-Type": "application/json","Accept": "application/json"},
       body: data
-    }).then(data=>data.json())
+    }).then(data => data.json())
   }
 
   async createMessage(data) {
