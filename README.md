@@ -2,7 +2,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Deployed Website
 
-[click here](https://guarded-earth-78620.herokuapp.com/)
+[click here](https://blake-react-inbox.herokuapp.com/)
 
 ## Available Scripts
 
